@@ -10,7 +10,7 @@ function App() {
   return (
     <GoogleOAuthProvider clientId="417816491383-t90ksfjigcpqk8fq12tjunnmq2kfjhha.apps.googleusercontent.com">
       <div className="containder">
-        <BrowserRouter>
+        <BrowserRouter basename="/Badges">
           <Routes>
             <Route path="/" element={<SignIn />} />
             <Route path="/Badge" element={<Badge />} />
