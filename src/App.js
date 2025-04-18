@@ -8,7 +8,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
   return (
-    <GoogleOAuthProvider clientId="417816491383-t90ksfjigcpqk8fq12tjunnmq2kfjhha.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="417816491383-i014i3jlhr2eiasno2mmbi2ei5shct8j.apps.googleusercontent.com">
       <div className="containder">
         <BrowserRouter basename="/Badges">
           <Routes>
