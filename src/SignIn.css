@@ -1,0 +1,28 @@
+/* SignIn.css */
+
+.signin-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 97vh;
+    background-color: rgba(58, 60, 226, 0.966); /* Couleur dominante du logo */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .signin-box {
+    background-color: white;
+    padding: 40px 50px;
+    border-radius: 16px;
+    box-shadow: 0px 4px 20px red;
+    text-align: center;
+  }
+  
+  .signin-box h2 {
+    color: red;
+    margin-bottom: 20px;
+  }
+  
+  .logo {
+    margin-bottom: 20px;
+  }
+  
