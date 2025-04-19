@@ -32,7 +32,9 @@ function SignIn() {
     <div className="signin-container">
       <div className="signin-box">
         <img src={Image} alt="Logo" width="20%" />
-        <h2>Connexion</h2>
+        <h1>Créateur de Badges</h1>
+        <h2>Ehs Mohamed Abderrahmani cardio-vasculaire</h2>
+        <p>Connectez-vous pour accéder à vos projets de badges personnalisés</p>
         <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
       </div>
     </div>
