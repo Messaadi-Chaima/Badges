@@ -43,6 +43,9 @@ function SignIn() {
           text="signin_with"
           shape="rectangular"
           locale="fr"
+          useOneTap={false}
+          auto_select={false} 
+          prompt="select_account" 
         />
       </div>
     </div>
