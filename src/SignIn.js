@@ -17,9 +17,7 @@ function SignIn() {
       name: decoded.name,
       email: decoded.email,
       picture: decoded.picture,
-      sub: decoded.sub, // Identifiant unique de l'utilisateur Google
-      given_name: decoded.given_name,
-      family_name: decoded.family_name
+      sub: decoded.sub
     }));
     
     // Rediriger vers la page Badge
@@ -33,17 +31,9 @@ function SignIn() {
   return (
     <div className="signin-container">
       <div className="signin-box">
-        <img src={Image} alt="Logo" style={{ width: "40%", marginBottom: "20px" }} />
-        <h1>Créateur de Badges</h1>
-        <h2>Ehs Mohamed Abderrahmani cardio-vasculaire</h2>
-        <p>Connectez-vous pour accéder à vos projets de badges personnalisés</p>
-        <GoogleLogin
-          onSuccess={handleSuccess}
-          onError={handleError}
-          text="signin_with"
-          shape="rectangular"
-          locale="fr"
-        />
+        <img src={Image} alt="Logo" width="20%" />
+        <h2>Connexion</h2>
+        <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
       </div>
     </div>
   );

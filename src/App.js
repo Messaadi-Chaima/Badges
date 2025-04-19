@@ -9,7 +9,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 function App() {
   return (
     <GoogleOAuthProvider clientId="417816491383-i014i3jlhr2eiasno2mmbi2ei5shct8j.apps.googleusercontent.com"
-    redirectUri="https://messaadi-chaima.github.io/Badges"
+    redirectUri="https://messaadi-chaima.github.io/Badges/oauth2callback"
     >
       <div className="containder">
         <BrowserRouter basename="/Badges">
