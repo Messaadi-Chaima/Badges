@@ -40,7 +40,9 @@ function SignIn() {
         <GoogleLogin
           onSuccess={handleSuccess}
           onError={handleError}
-         
+          text="signin_with"
+          shape="rectangular"
+          locale="fr"
         />
       </div>
     </div>
