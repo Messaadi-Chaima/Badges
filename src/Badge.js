@@ -266,7 +266,7 @@ const Badge = () => {
   };
 
   const downloadBadge = () => {
-    const dataURL = stageRef.current.toDataURL({ pixelRatio: 6});
+    const dataURL = stageRef.current.toDataURL({ pixelRatio: 10});
     const link = document.createElement("a");
     link.href = dataURL;
     link.download = "badge.png";
@@ -531,7 +531,7 @@ const Badge = () => {
 
         <Stage
           width={844}
-          height={600}
+          height={400}
           onMouseDown={handleDeselect}
           ref={stageRef}
           style={{ border: `2px solid ${primaryColor}`, borderRadius: '10px', backgroundColor: '#fff' }}
