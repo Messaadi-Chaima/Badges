@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Stage, Layer, Text, Image as KonvaImage, Transformer, Group } from "react-konva";
+import { Stage, Layer, Text, Rect, Image as KonvaImage, Transformer, Group } from "react-konva";
 import useImage from "use-image";
 import { useNavigate } from 'react-router-dom';
 import {
@@ -220,14 +220,19 @@ const Badge = () => {
   };
 
   const addImage = url => {
+    // Calculer la position pour centrer l'image dans la zone du badge
+    const x = (844 - 371) / 2; // Centrer horizontalement
+    const y = (533 - 234) / 2; // Centrer verticalement
+    
     const newImg = {
       id: `image-${Date.now()}`,
       type: "image",
       src: url,
-      x: 50,
-      y: 50,
-      width: 100,
-      height: 100
+      x: x,
+      y: y,
+      // Dimensions proportionnelles à 3,370 x 2,125
+      width: 371, // ~3.370 * 110 (facteur d'échelle)
+      height: 234, // ~2.125 * 110 (facteur d'échelle)
     };
     setElements([...elements, newImg]);
   };
@@ -266,10 +271,15 @@ const Badge = () => {
   };
 
   const downloadBadge = () => {
-    const dataURL = stageRef.current.toDataURL({ pixelRatio: 3});
+    // Télécharger le badge aux dimensions exactes 3,370 x 2,125 (en pixels)
+    const dataURL = stageRef.current.toDataURL({ 
+      pixelRatio: 3,
+      width: 3370, // Dimensions exactes en pixels pour une impression haute qualité
+      height: 2125
+    });
     const link = document.createElement("a");
     link.href = dataURL;
-    link.download = "badge.png";
+    link.download = "badge_3370x2125.png";
     link.click();
   };
 
@@ -371,6 +381,10 @@ const Badge = () => {
       <Container maxWidth="md" sx={{ mt: 3 }}>
         <Typography variant="h5" sx={{ color: primaryColor, fontWeight: 'bold', mb: 2 }}>
           Éditeur de Badge Personnalisé
+        </Typography>
+
+        <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary', textAlign: 'center' }}>
+          Dimensions de la carte: 3,370" x 2,125" (Format Badge Standard)
         </Typography>
 
         {sel.type === 'text' && (
@@ -487,7 +501,7 @@ const Badge = () => {
             Supprimer l'élément
           </Button>
           <Button variant="contained" sx={{ backgroundColor: primaryColor }} onClick={downloadBadge}>
-            Télécharger le Badge
+            Télécharger le Badge (3,370" x 2,125")
           </Button>
           <Button variant="outlined" color="primary" onClick={saveModel}>
             Sauvegarder Modèle
@@ -531,12 +545,29 @@ const Badge = () => {
 
         <Stage
           width={844}
-          height={400}
+          height={533} // Modifié pour respecter le ratio 3.370:2.125
           onMouseDown={handleDeselect}
           ref={stageRef}
-          style={{ border: `2px solid ${primaryColor}`, borderRadius: '10px', backgroundColor: '#fff' }}
+          style={{ 
+            border: `2px solid ${primaryColor}`, 
+            borderRadius: '10px', 
+            backgroundColor: '#fff',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          }}
         >
           <Layer>
+            {/* Rectangle pour indiquer les limites du badge */}
+            <Rect
+              x={0}
+              y={0}
+              width={844}
+              height={533}
+              stroke="#BBBBBB"
+              strokeWidth={1}
+              dash={[5, 5]}
+              fill="transparent"
+            />
+            
             {elements.map(el =>
               el.type === "text" ? (
                 <KonvaText
