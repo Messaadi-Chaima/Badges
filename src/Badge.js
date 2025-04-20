@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Stage, Layer, Text, Rect, Image as KonvaImage, Transformer, Group } from "react-konva";
+import { Stage, Layer, Text, Image as KonvaImage, Transformer, Group } from "react-konva";
 import useImage from "use-image";
 import { useNavigate } from 'react-router-dom';
 import {
@@ -141,22 +141,9 @@ const Badge = () => {
   const [selectedModel, setSelectedModel] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const stageRef = useRef();
-  
-  // État pour le guidage visuel (rectangle en pointillés)
-  const [showGuide, setShowGuide] = useState(true);
-
-  // Référence pour le rectangle de guidage
-  const guideRectRef = useRef(null);
 
   // Valeur spéciale pour l'option "Nouveau badge"
   const NEW_BADGE_OPTION = "___new_badge___";
-
-  // Dimensions du badge (ratio largeur/hauteur = 3.370/2.125)
-  const BADGE_RATIO = 3.370 / 2.125;
-  
-  // Dimensions de la zone d'édition
-  const STAGE_WIDTH = 844;
-  const STAGE_HEIGHT = Math.round(STAGE_WIDTH / BADGE_RATIO);
 
   // Récupérer l'utilisateur connecté et ses modèles
   useEffect(() => {
@@ -219,8 +206,8 @@ const Badge = () => {
       id: `text-${Date.now()}`,
       type: "text",
       text: textValue,
-      x: STAGE_WIDTH / 2,
-      y: STAGE_HEIGHT / 2,
+      x: 150,
+      y: 180,
       fontSize: 24,
       fontFamily: "Arial",
       fill: textColor,
@@ -233,54 +220,16 @@ const Badge = () => {
   };
 
   const addImage = url => {
-    // Create a temporary image object to get the natural dimensions
-    const tempImg = new Image();
-    tempImg.onload = () => {
-      // Get the image's natural width and height
-      const naturalWidth = tempImg.width;
-      const naturalHeight = tempImg.height;
-      
-      // Calculate the aspect ratio of the image
-      const imageRatio = naturalWidth / naturalHeight;
-      
-      // Calculate dimensions that fit the badge area while preserving aspect ratio
-      let width, height;
-      
-      // Use a larger percentage of the badge area (e.g., 70-80%)
-      const targetWidth = STAGE_WIDTH * 0.8;
-      const targetHeight = STAGE_HEIGHT * 0.8;
-      
-      if (imageRatio > BADGE_RATIO) {
-        // Image is wider than the badge ratio
-        width = targetWidth;
-        height = width / imageRatio;
-      } else {
-        // Image is taller than the badge ratio
-        height = targetHeight;
-        width = height * imageRatio;
-      }
-      
-      // Calculate position to center the image
-      const x = (STAGE_WIDTH - width) / 2;
-      const y = (STAGE_HEIGHT - height) / 2;
-      
-      // Create new image element with calculated dimensions
-      const newImg = {
-        id: `image-${Date.now()}`,
-        type: "image",
-        src: url,
-        x: x,
-        y: y,
-        width: width,
-        height: height,
-      };
-      
-      // Add the image to elements
-      setElements(prevElements => [...prevElements, newImg]);
+    const newImg = {
+      id: `image-${Date.now()}`,
+      type: "image",
+      src: url,
+      x: 50,
+      y: 50,
+      width: 100,
+      height: 100
     };
-    
-    // Set the source to trigger the onload event
-    tempImg.src = url;
+    setElements([...elements, newImg]);
   };
 
   const updateElement = updatedProps => {
@@ -316,83 +265,12 @@ const Badge = () => {
     if (selectedId) deleteElement(selectedId);
   };
 
-  // Fonction révisée pour le téléchargement du badge
   const downloadBadge = () => {
-    // Désactiver temporairement la sélection
-    const previousSelectedId = selectedId;
-    setSelectedId(null);
-    
-    // Cacher temporairement le rectangle de guidage si présent
-    setShowGuide(false);
-    
-    // Utiliser un délai pour s'assurer que l'état a été mis à jour
-    setTimeout(() => {
-      if (!stageRef.current) {
-        console.error("Référence au stage non disponible");
-        return;
-      }
-      
-      try {
-        // Créer une copie hors écran (canvas) pour manipuler l'image
-        const offscreenCanvas = document.createElement('canvas');
-        offscreenCanvas.width = 3370;
-        offscreenCanvas.height = 2125;
-        const ctx = offscreenCanvas.getContext('2d');
-        
-        // Fond blanc
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
-        
-        // Obtenir l'image de la scène
-        const uri = stageRef.current.toDataURL({
-          pixelRatio: 1,
-          mimeType: 'image/png'
-        });
-        
-        // Créer une image temporaire pour manipuler les données
-        const tempImg = new Image();
-        tempImg.onload = () => {
-          // Calculer les facteurs d'échelle
-          const scaleX = offscreenCanvas.width / STAGE_WIDTH;
-          const scaleY = offscreenCanvas.height / STAGE_HEIGHT;
-          
-          // Dessiner l'image redimensionnée sur le canvas
-          ctx.drawImage(
-            tempImg, 
-            0, 0, tempImg.width, tempImg.height,  // Source rectangle
-            0, 0, offscreenCanvas.width, offscreenCanvas.height  // Destination rectangle (full size)
-          );
-          
-          // Convertir le canvas en URL de données
-          const finalDataURL = offscreenCanvas.toDataURL('image/png');
-          
-          // Créer un lien de téléchargement et le déclencher
-          const link = document.createElement('a');
-          link.download = 'badge_3370x2125.png';
-          link.href = finalDataURL;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          // Restaurer l'affichage du guide et la sélection
-          setShowGuide(true);
-          if (previousSelectedId) {
-            setSelectedId(previousSelectedId);
-          }
-        };
-        
-        tempImg.src = uri;
-      } catch (error) {
-        console.error("Erreur lors du téléchargement:", error);
-        alert("Une erreur s'est produite lors de la génération du badge. Veuillez réessayer.");
-        
-        // Restaurer l'affichage du guide en cas d'erreur
-        setShowGuide(true);
-        if (previousSelectedId) {
-          setSelectedId(previousSelectedId);
-        }
-      }
-    }, 50);
+    const dataURL = stageRef.current.toDataURL({ pixelRatio: 3 });
+    const link = document.createElement("a");
+    link.href = dataURL;
+    link.download = "badge.png";
+    link.click();
   };
 
   const saveModel = () => {
@@ -461,50 +339,6 @@ const Badge = () => {
 
   const sel = elements.find(el => el.id === selectedId) || {};
 
-  // Composant de téléchargement alternatif en tant que bouton séparé
-  const DownloadButton = () => {
-    return (
-      <button 
-        style={{
-          backgroundColor: primaryColor,
-          color: 'white',
-          padding: '8px 16px',
-          borderRadius: '4px',
-          border: 'none',
-          cursor: 'pointer',
-          fontWeight: 'bold',
-          margin: '10px'
-        }}
-        onClick={() => {
-          // Approche alternative utilisant l'API du navigateur
-          const canvas = stageRef.current.toCanvas({
-            pixelRatio: 2,
-            width: 3370,
-            height: 2125
-          });
-          
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const url = URL.createObjectURL(blob);
-              const link = document.createElement('a');
-              link.download = 'badge_3370x2125.png';
-              link.href = url;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              URL.revokeObjectURL(url);
-            } else {
-              console.error("Erreur lors de la génération du blob");
-              alert("Une erreur s'est produite. Veuillez réessayer.");
-            }
-          }, 'image/png');
-        }}
-      >
-        Télécharger Badge (méthode alternative)
-      </button>
-    );
-  };
-
   return (
     <Box sx={{ backgroundColor, minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <AppBar position="static" sx={{ backgroundColor: primaryColor }}>
@@ -537,10 +371,6 @@ const Badge = () => {
       <Container maxWidth="md" sx={{ mt: 3 }}>
         <Typography variant="h5" sx={{ color: primaryColor, fontWeight: 'bold', mb: 2 }}>
           Éditeur de Badge Personnalisé
-        </Typography>
-
-        <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary', textAlign: 'center' }}>
-          Dimensions de la carte: 3,370" x 2,125" (Format Badge Standard)
         </Typography>
 
         {sel.type === 'text' && (
@@ -657,16 +487,11 @@ const Badge = () => {
             Supprimer l'élément
           </Button>
           <Button variant="contained" sx={{ backgroundColor: primaryColor }} onClick={downloadBadge}>
-            Télécharger le Badge (3,370" x 2,125")
+            Télécharger le Badge
           </Button>
           <Button variant="outlined" color="primary" onClick={saveModel}>
             Sauvegarder Modèle
           </Button>
-        </Box>
-
-        {/* Bouton de téléchargement alternatif */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-          <DownloadButton />
         </Box>
 
         <Box sx={{ display: 'flex', gap: 2, mb: 2, justifyContent: 'center' }}>
@@ -705,33 +530,13 @@ const Badge = () => {
         </Box>
 
         <Stage
-          width={STAGE_WIDTH}
-          height={STAGE_HEIGHT} // Modifié pour respecter le ratio 3.370:2.125
+          width={844}
+          height={400}
           onMouseDown={handleDeselect}
           ref={stageRef}
-          style={{ 
-            border: `2px solid ${primaryColor}`, 
-            borderRadius: '10px', 
-            backgroundColor: '#fff',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-          }}
+          style={{ border: `2px solid ${primaryColor}`, borderRadius: '10px', backgroundColor: '#fff' }}
         >
           <Layer>
-            {/* Rectangle pour indiquer les limites du badge - à cacher lors du téléchargement */}
-            {showGuide && (
-              <Rect
-                x={0}
-                y={0}
-                width={STAGE_WIDTH}
-                height={STAGE_HEIGHT}
-                stroke="#BBBBBB"
-                strokeWidth={1}
-                dash={[5, 5]}
-                fill="transparent"
-                ref={guideRectRef}
-              />
-            )}
-            
             {elements.map(el =>
               el.type === "text" ? (
                 <KonvaText
