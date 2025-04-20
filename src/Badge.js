@@ -233,21 +233,54 @@ const Badge = () => {
   };
 
   const addImage = url => {
-    // Calculer la position pour centrer l'image dans la zone du badge
-    const x = (STAGE_WIDTH - 371) / 2; // Centrer horizontalement
-    const y = (STAGE_HEIGHT - 234) / 2; // Centrer verticalement
-    
-    const newImg = {
-      id: `image-${Date.now()}`,
-      type: "image",
-      src: url,
-      x: x,
-      y: y,
-      // Dimensions proportionnelles à 3,370 x 2,125
-      width: 371, // ~3.370 * 110 (facteur d'échelle)
-      height: 234, // ~2.125 * 110 (facteur d'échelle)
+    // Create a temporary image object to get the natural dimensions
+    const tempImg = new Image();
+    tempImg.onload = () => {
+      // Get the image's natural width and height
+      const naturalWidth = tempImg.width;
+      const naturalHeight = tempImg.height;
+      
+      // Calculate the aspect ratio of the image
+      const imageRatio = naturalWidth / naturalHeight;
+      
+      // Calculate dimensions that fit the badge area while preserving aspect ratio
+      let width, height;
+      
+      // Use a larger percentage of the badge area (e.g., 70-80%)
+      const targetWidth = STAGE_WIDTH * 0.8;
+      const targetHeight = STAGE_HEIGHT * 0.8;
+      
+      if (imageRatio > BADGE_RATIO) {
+        // Image is wider than the badge ratio
+        width = targetWidth;
+        height = width / imageRatio;
+      } else {
+        // Image is taller than the badge ratio
+        height = targetHeight;
+        width = height * imageRatio;
+      }
+      
+      // Calculate position to center the image
+      const x = (STAGE_WIDTH - width) / 2;
+      const y = (STAGE_HEIGHT - height) / 2;
+      
+      // Create new image element with calculated dimensions
+      const newImg = {
+        id: `image-${Date.now()}`,
+        type: "image",
+        src: url,
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+      };
+      
+      // Add the image to elements
+      setElements(prevElements => [...prevElements, newImg]);
     };
-    setElements([...elements, newImg]);
+    
+    // Set the source to trigger the onload event
+    tempImg.src = url;
   };
 
   const updateElement = updatedProps => {
