@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Stage, Layer, Text, Rect, Image as KonvaImage, Transformer, Group } from "react-konva";
+import Konva from 'konva';
 import useImage from "use-image";
 import { useNavigate } from 'react-router-dom';
 import {
@@ -271,16 +272,51 @@ const Badge = () => {
   };
 
   const downloadBadge = () => {
-    // Télécharger le badge aux dimensions exactes 3,370 x 2,125 (en pixels)
-    const dataURL = stageRef.current.toDataURL({ 
-      pixelRatio: 3,
-      width: 3370, // Dimensions exactes en pixels pour une impression haute qualité
-      height: 2125
+    // Créer une nouvelle instance de Stage temporaire pour l'export
+    const tempStage = stageRef.current.clone();
+    
+    // Récupérer tous les éléments de la scène actuelle
+    const layer = tempStage.findOne('Layer');
+    
+    // Redimensionner les éléments proportionnellement pour qu'ils s'adaptent à la nouvelle taille
+    const scaleX = 3370 / 844;
+    const scaleY = 2125 / 533;
+    
+    // Appliquer les transformations à tous les éléments
+    layer.children.forEach((node) => {
+      // Ne pas appliquer la transformation au rectangle de guidage
+      if (node instanceof Rect && node.dash && node.dash().length > 0) {
+        // Supprimer le rectangle de guidage
+        node.destroy();
+      } else {
+        // Repositionner et redimensionner chaque élément
+        node.x(node.x() * scaleX);
+        node.y(node.y() * scaleY);
+        
+        if (node instanceof KonvaImage) {
+          node.width(node.width() * scaleX);
+          node.height(node.height() * scaleY);
+        } else if (node instanceof Text) {
+          node.fontSize(node.fontSize() * scaleX);
+        }
+      }
     });
+    
+    // Redimensionner la scène temporaire
+    tempStage.width(3370);
+    tempStage.height(2125);
+    
+    // Générer le dataURL
+    const dataURL = tempStage.toDataURL({ pixelRatio: 1 });
+    
+    // Télécharger l'image
     const link = document.createElement("a");
     link.href = dataURL;
     link.download = "badge_3370x2125.png";
     link.click();
+    
+    // Nettoyer la mémoire
+    tempStage.destroy();
   };
 
   const saveModel = () => {
