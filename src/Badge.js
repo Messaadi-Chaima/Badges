@@ -267,8 +267,6 @@ const Badge = () => {
 
   const downloadBadge = () => {
     const dataURL = stageRef.current.toDataURL({
-      width: 1010,
-      height: 638,
       pixelRatio: 1,
     });
     
