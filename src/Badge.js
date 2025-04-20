@@ -272,21 +272,18 @@ const Badge = () => {
   };
 
   const downloadBadge = () => {
-    try {
-      const dataURL = stageRef.current.toDataURL({
-        pixelRatio: 2,
-        width: 3370,
-        height: 2125
-      });
-      
-      // Ouvrir l'image dans un nouvel onglet (alternative au téléchargement direct)
-      window.open(dataURL, '_blank');
-    } catch (error) {
-      console.error("Erreur:", error);
-      alert("Erreur lors de la génération de l'image.");
-    }
+    // Télécharger le badge aux dimensions exactes 3,370 x 2,125 (en pixels)
+    const dataURL = stageRef.current.toDataURL({ 
+      pixelRatio: 2,
+      width: 3370, // Dimensions exactes en pixels pour une impression haute qualité
+      height: 2125
+    });
+    const link = document.createElement("a");
+    link.href = dataURL;
+    link.download = "badge_3370x2125.png";
+    link.click();
   };
-  
+
   const saveModel = () => {
     if (!currentUser) return;
     
