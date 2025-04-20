@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/Badges/static/css/main.bb535f85.css",
-    "main.js": "/Badges/static/js/main.e4010a6b.js",
+    "main.js": "/Badges/static/js/main.d2a53e47.js",
     "static/media/Image1.jpg": "/Badges/static/media/Image1.c2848955ed94a2da22d0.jpg",
     "index.html": "/Badges/index.html",
     "main.bb535f85.css.map": "/Badges/static/css/main.bb535f85.css.map",
-    "main.e4010a6b.js.map": "/Badges/static/js/main.e4010a6b.js.map"
+    "main.d2a53e47.js.map": "/Badges/static/js/main.d2a53e47.js.map"
   },
   "entrypoints": [
     "static/css/main.bb535f85.css",
-    "static/js/main.e4010a6b.js"
+    "static/js/main.d2a53e47.js"
   ]
 }
