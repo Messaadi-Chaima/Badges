@@ -530,8 +530,8 @@ const Badge = () => {
         </Box>
 
         <Stage
-          width={3400}
-          height={2100}
+          width={340}
+          height={210}
           onMouseDown={handleDeselect}
           ref={stageRef}
           style={{ border: `2px solid ${primaryColor}`, borderRadius: '10px', backgroundColor: '#fff' }}
