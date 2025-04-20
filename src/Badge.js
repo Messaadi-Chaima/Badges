@@ -272,53 +272,70 @@ const Badge = () => {
   };
 
   const downloadBadge = () => {
-    // Créer une nouvelle instance de Stage temporaire pour l'export
-    const tempStage = stageRef.current.clone();
-    
-    // Récupérer tous les éléments de la scène actuelle
-    const layer = tempStage.findOne('Layer');
-    
-    // Redimensionner les éléments proportionnellement pour qu'ils s'adaptent à la nouvelle taille
-    const scaleX = 3370 / 844;
-    const scaleY = 2125 / 533;
-    
-    // Appliquer les transformations à tous les éléments
-    layer.children.forEach((node) => {
-      // Ne pas appliquer la transformation au rectangle de guidage
-      if (node instanceof Rect && node.dash && node.dash().length > 0) {
-        // Supprimer le rectangle de guidage
-        node.destroy();
-      } else {
-        // Repositionner et redimensionner chaque élément
-        node.x(node.x() * scaleX);
-        node.y(node.y() * scaleY);
-        
-        if (node instanceof KonvaImage) {
-          node.width(node.width() * scaleX);
-          node.height(node.height() * scaleY);
-        } else if (node instanceof Text) {
-          node.fontSize(node.fontSize() * scaleX);
+    try {
+      // Désactiver temporairement les transformers pour qu'ils n'apparaissent pas dans l'image exportée
+      const transformers = stageRef.current.find('Transformer');
+      transformers.forEach(tr => tr.visible(false));
+      
+      // Masquer également le rectangle en pointillés s'il existe
+      const guides = stageRef.current.find('Rect');
+      guides.forEach(rect => {
+        if (rect.dash && rect.dash().length > 0) {
+          rect.visible(false);
         }
-      }
-    });
-    
-    // Redimensionner la scène temporaire
-    tempStage.width(3370);
-    tempStage.height(2125);
-    
-    // Générer le dataURL
-    const dataURL = tempStage.toDataURL({ pixelRatio: 1 });
-    
-    // Télécharger l'image
-    const link = document.createElement("a");
-    link.href = dataURL;
-    link.download = "badge_3370x2125.png";
-    link.click();
-    
-    // Nettoyer la mémoire
-    tempStage.destroy();
+      });
+      
+      // Forcer un redraw de la scène
+      stageRef.current.batchDraw();
+      
+      // Créer un timeout pour s'assurer que les modifications visuelles sont appliquées
+      setTimeout(() => {
+        try {
+          // Télécharger le badge aux dimensions exactes 3,370 x 2,125 (en pixels)
+          const dataURL = stageRef.current.toDataURL({
+            pixelRatio: 2,
+            width: 3370,
+            height: 2125,
+            mimeType: 'image/png'
+          });
+          
+          // Créer un élément a temporaire pour le téléchargement
+          const downloadLink = document.createElement('a');
+          downloadLink.href = dataURL;
+          downloadLink.download = 'badge_3370x2125.png';
+          document.body.appendChild(downloadLink); // Nécessaire pour Firefox
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+          
+          // Rétablir la visibilité des transformers et des guides
+          transformers.forEach(tr => tr.visible(true));
+          guides.forEach(rect => {
+            if (rect.dash && rect.dash().length > 0) {
+              rect.visible(true);
+            }
+          });
+          
+          stageRef.current.batchDraw();
+        } catch (exportError) {
+          console.error("Erreur lors de l'export:", exportError);
+          alert("Erreur lors de la génération de l'image. Veuillez réessayer.");
+          
+          // Rétablir la visibilité des transformers et des guides en cas d'erreur
+          transformers.forEach(tr => tr.visible(true));
+          guides.forEach(rect => {
+            if (rect.dash && rect.dash().length > 0) {
+              rect.visible(true);
+            }
+          });
+          
+          stageRef.current.batchDraw();
+        }
+      }, 100);
+    } catch (error) {
+      console.error("Erreur lors du téléchargement:", error);
+      alert("Erreur lors du téléchargement. Veuillez réessayer.");
+    }
   };
-
   const saveModel = () => {
     if (!currentUser) return;
     
