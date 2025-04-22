@@ -224,10 +224,10 @@ const Badge = () => {
       id: `image-${Date.now()}`,
       type: "image",
       src: url,
-      x: 50,
-      y: 50,
-      width: 100,
-      height: 100
+      x: 200,
+      y: 200,
+      width: 400,
+      height: 400
     };
     setElements([...elements, newImg]);
   };
