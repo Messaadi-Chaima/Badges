@@ -266,7 +266,7 @@ const Badge = () => {
   };
 
   const downloadBadge = () => {
-    const dataURL = stageRef.current.toDataURL({ pixelRatio: 3 });
+    const dataURL = stageRef.current.toDataURL({ pixelRatio: 4 });
     const link = document.createElement("a");
     link.href = dataURL;
     link.download = "badge.png";
